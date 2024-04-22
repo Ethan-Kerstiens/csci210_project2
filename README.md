@@ -84,6 +84,7 @@ OUTPUT SUCCESS: node a created
 OUTPUT SUCCESS: node b created
 ```
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 ## Development Notes & Roadmap
 
@@ -107,3 +108,37 @@ OUTPUT SUCCESS: node b created
 
 =======
 >>>>>>> b6a27b5 (Update README.md)
+=======
+
+### Sample Execution 3
+
+Input
+```
+mkdir a/b
+mkdir a
+mkdir a/b
+quit
+```
+
+Output
+```
+FAIL - Directory a does not exist
+SUCCESS - Node a successfully created
+SUCCESS - Node a/b successfully created
+```
+
+### Sample Execution 4
+
+Input
+```
+mkdir a
+mkdir b
+quit
+```
+
+Output
+```
+SUCCESS - Node a successfully created
+SUCCESS - Node b successfully created
+```
+>>>>>>> f7c611c (Update README.md)
