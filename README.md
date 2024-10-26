@@ -51,7 +51,7 @@ struct NODE {
     struct NODE* parentPtr;
 };
 ```
-The fileType field should be set to 'F' for regular files and to 'D' for directories. Each file and directory has a name, which is at most 63 characters long (note that we need the NULL char for the end). If the node represents a directory and it has files or other directories in it, the **childPtr** would point to the first file or directory created in it. The order of creation would dictate the order of the children. In order to traverse the children nodes, one needs to follow the sibling pointers, **siblingPtr**, starting with the first child's siblingPtr. Each file or directory also has a pointer to its unique parent. Note that only the root directory has its parentPts set to NULL (see the initialize() function in main.c).
+The fileType field should be set to 'F' for regular files and to 'D' for directories. Each file and directory has a name, which is at most 63 characters long (note that we need the NULL char for the end). If the node represents a directory and it has files or other directories in it, the **childPtr** would point to the first file or directory created in it. The order of creation would dictate the order of the children. In order to traverse the children nodes, one needs to follow the sibling pointers, **siblingPtr**, starting with the first child's siblingPtr. Each file or directory also has a pointer to its unique parent. Note that only the root directory has its parentPtr set to NULL (see the initialize() function in main.c).
 
 If we run the simulator with the following commands:
 
