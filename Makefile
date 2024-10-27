@@ -1,17 +1,15 @@
-CC=gcc
-CFLAGS=-g -Wall -std=c11
+CC = gcc
+CFLAGS = -g -Wall -std=c11
 DEPS = types.h
-OBJ = other_commands.o mkdir_splitpath.o 
-
-.DEFAULT_GOAL := main
+OBJ = main.o other_commands.o mkdir_splitpath.o
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-main: main.c $(OBJ)
+main: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean
 
 clean:
-	rm -f mkdir_splitpath.o main
+	rm -f $(OBJ) main
