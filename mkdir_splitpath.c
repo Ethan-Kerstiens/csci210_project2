@@ -3,13 +3,34 @@
 #include <stdlib.h>
 #include "types.h"
 
+// Maximum number of messages to store
+#define MAX_OUTPUT 1024
+
+// Buffer to store all output messages
+char outputBuffer[MAX_OUTPUT][256];
+int outputIndex = 0;
+
+// Function to store messages in the buffer
+void storeOutput(const char* message) {
+    if (outputIndex < MAX_OUTPUT) {
+        strncpy(outputBuffer[outputIndex], message, 255);
+        outputBuffer[outputIndex][255] = '\0';  // Ensure null termination
+        outputIndex++;
+    }
+}
+
+// Function to print all stored output messages at the end
+void printAllOutputs() {
+    printf("\n--- Program Output ---\n");
+    for (int i = 0; i < outputIndex; i++) {
+        printf("%s", outputBuffer[i]);
+    }
+    printf("--- End of Output ---\n");
+}
+
 extern struct NODE* root;
 extern struct NODE* cwd;
 
-/**
- * Splits the given `pathName` into `dirName` (directory) and `baseName` (final element).
- * Supports both absolute and relative paths.
- */
 struct NODE* splitPath(char* pathName, char* baseName, char* dirName) {
     if (pathName[0] == '/') {
         strcpy(dirName, "/");
@@ -17,17 +38,15 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName) {
         strcpy(dirName, cwd->name);
     }
 
-    // Extract the base name (last part) from the path
     char* token = strrchr(pathName, '/');
     if (token) {
         strcpy(baseName, token + 1);
-        strncpy(dirName, pathName, token - pathName);  // Copy the directory part
-        dirName[token - pathName] = '\0';  // Null-terminate the string
+        strncpy(dirName, pathName, token - pathName);
+        dirName[token - pathName] = '\0';
     } else {
         strcpy(baseName, pathName);
     }
 
-    // Traverse from the root or current directory to find the parent node
     struct NODE* parent = (dirName[0] == '/') ? root : cwd;
     char temp[64];
     strcpy(temp, dirName);
@@ -43,8 +62,10 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName) {
             child = child->siblingPtr;
         }
         if (!child) {
-            printf("ERROR: Directory %s not found\n", token);
-            return NULL;  // Directory does not exist
+            char errorMsg[256];
+            snprintf(errorMsg, sizeof(errorMsg), "ERROR: Directory %s not found\n", token);
+            storeOutput(errorMsg);
+            return NULL;
         }
         token = strtok(NULL, "/");
     }
@@ -52,12 +73,9 @@ struct NODE* splitPath(char* pathName, char* baseName, char* dirName) {
     return parent;
 }
 
-/**
- * Creates a new directory at the specified path.
- */
 void mkdir(char pathName[]) {
     if (strcmp(pathName, "/") == 0) {
-        printf("MKDIR ERROR: Cannot create root directory\n");
+        storeOutput("MKDIR ERROR: Cannot create root directory\n");
         return;
     }
 
@@ -65,21 +83,21 @@ void mkdir(char pathName[]) {
     struct NODE* parent = splitPath(pathName, baseName, dirName);
 
     if (parent == NULL) {
-        printf("MKDIR ERROR: Invalid path\n");
+        storeOutput("MKDIR ERROR: Invalid path\n");
         return;
     }
 
-    // Check if the directory already exists
     struct NODE* existing = parent->childPtr;
     while (existing) {
         if (strcmp(existing->name, baseName) == 0) {
-            printf("MKDIR ERROR: Directory %s already exists\n", pathName);
+            char errorMsg[256];
+            snprintf(errorMsg, sizeof(errorMsg), "MKDIR ERROR: Directory %s already exists\n", pathName);
+            storeOutput(errorMsg);
             return;
         }
         existing = existing->siblingPtr;
     }
 
-    // Create and link the new directory node
     struct NODE* newDir = (struct NODE*)malloc(sizeof(struct NODE));
     strcpy(newDir->name, baseName);
     newDir->fileType = 'D';
@@ -97,5 +115,12 @@ void mkdir(char pathName[]) {
         sibling->siblingPtr = newDir;
     }
 
-    printf("MKDIR SUCCESS: Directory %s created\n", pathName);
+    char successMsg[256];
+    snprintf(successMsg, sizeof(successMsg), "MKDIR SUCCESS: Directory %s created\n", pathName);
+    storeOutput(successMsg);
+}
+
+int quit() {
+    printAllOutputs();  // Print all stored outputs when quitting
+    return 0;
 }
