@@ -10,7 +10,10 @@
 char outputBuffer[MAX_OUTPUT][256];
 int outputIndex = 0;
 
-// Function to store messages in the buffer
+// Declare quit() as an external function (defined in main.c)
+extern int quit();
+
+// Store messages in the buffer
 void storeOutput(const char* message) {
     if (outputIndex < MAX_OUTPUT) {
         strncpy(outputBuffer[outputIndex], message, 255);
@@ -19,7 +22,7 @@ void storeOutput(const char* message) {
     }
 }
 
-// Function to print all stored output messages at the end
+// Print all stored output messages at the end
 void printAllOutputs() {
     printf("\n--- Program Output ---\n");
     for (int i = 0; i < outputIndex; i++) {
@@ -118,9 +121,4 @@ void mkdir(char pathName[]) {
     char successMsg[256];
     snprintf(successMsg, sizeof(successMsg), "MKDIR SUCCESS: Directory %s created\n", pathName);
     storeOutput(successMsg);
-}
-
-int quit() {
-    printAllOutputs();  // Print all stored outputs when quitting
-    return 0;
 }
